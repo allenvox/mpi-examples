@@ -4,14 +4,15 @@
 #include <string.h>
 
 int main(int argc, char **argv) {
-  int rank, size, root = 0, count = 8 * 1024 * 1024;
-  char *buf = malloc(sizeof(int) * count);
+  int rank, size, root = 0, count = 1024 * 1024;
+  char *buf = malloc(sizeof(char) * count);
   MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
   double t = MPI_Wtime();
   if (rank == root) {
+    printf("[broadcast] info: %d processes, root = %d, size = %d B\n", size, root, count);
     buf[0] = 'x';
     for (int i = 0; i < size; i++) {
       if (i != root) {

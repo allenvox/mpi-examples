@@ -4,33 +4,32 @@
 #include <unistd.h>
 
 int main(int argc, char **argv) {
-  int rank, size;
+  int rank, size, count = 1024 * 1024;
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
-  int receiver = (rank + 1) % size, sender = (rank - 1 + size) % size;
-  int *mainbuf = malloc(sizeof(int) * size);
-  for (int i = 0; i < size; ++i) {
-    mainbuf[i] = -1;
+  if(rank == 0) {
+    printf("[ring] info: %d processes, size = %d B\n", size, count);
   }
-  mainbuf[rank] = rank;
-  int r = sender, s = rank;
+  int sendTo = (rank + 1) % size, receiveFrom = (rank - 1 + size) % size;
+  char *mainbuf = malloc(sizeof(char) * size);
 
   double t = MPI_Wtime();
   for (int i = 0; i < size - 1; ++i) {
     printf("[ring] %d: sending to %d, receiving from %d\n", rank,
-           receiver, sender;
-    MPI_Sendrecv(&mainbuf[s], 1, MPI_INT, receiver, 0, &mainbuf[r], 1,
-                 MPI_INT, sender, 0, MPI_COMM_WORLD,
+           sendTo, receiveFrom);
+    MPI_Sendrecv(&mainbuf[sendTo], 1, MPI_CHAR, sendTo, 0, &mainbuf[receiveFrom], 1,
+                 MPI_CHAR, receiveFrom, 0, MPI_COMM_WORLD,
                  MPI_STATUS_IGNORE);
-    s = r;
-    r = (r - 1 + size) % size;
+    sendTo = receiveFrom;
+    receiveFrom = (receiveFrom - 1 + size) % size;
   }
   t = MPI_Wtime() - t;
+  printf("[ring] %d: elapsed %.6f sec\n", rank, t);
 
   for (int i = 0; i < size; ++i) {
     if (!(i)) {
-      printf("[ring] %d: contain [%d, ", rank, mainbuf[i]);
+      printf("[ring] %d contains [%d, ", rank, mainbuf[i]);
     } else {
       if (i == size - 1) {
         printf("%d]\n", mainbuf[i]);
@@ -39,7 +38,6 @@ int main(int argc, char **argv) {
       }
     }
   }
-  printf("[ring] %d: elapsed %.6f sec\n", rank, t);
 
   free(mainbuf);
   MPI_Finalize();
