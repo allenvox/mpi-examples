@@ -1,3 +1,0 @@
-#!/bin/bash
-#SBATCH --nodes=2 --ntasks-per-node=2
-mpiexec hello-world/main.cout

@@ -1,3 +1,0 @@
-#!/bin/bash
-#SBATCH --nodes=2 --ntasks-per-node=8
-mpiexec ring/main.cppout

@@ -4,7 +4,7 @@ CSRC = $(wildcard */*.c)
 CEXEC = $(wildcard */*.cout)
 
 CXX = mpicxx
-CXXFLAGS = -pedantic -std=c++17
+CXXFLAGS = -pedantic -std=c++17 -ld_classic
 CXXSRC = $(wildcard */*.cpp)
 CXXEXEC = $(wildcard */*.cppout)
 
