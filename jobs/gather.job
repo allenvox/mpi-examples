@@ -1,3 +1,3 @@
 #!/bin/bash
 #SBATCH --nodes=2 --ntasks-per-node=4
-mpiexec build/bin/gather
+mpiexec bin/gather
