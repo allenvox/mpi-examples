@@ -2,52 +2,38 @@
 
 #include <iostream>
 
-int main(/*int argc, char **argv*/) {
-    // int rank, size, next, prev, bufsize = 1;
-    // MPI_Init(&argc, &argv);
-    // MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    // MPI_Comm_size(MPI_COMM_WORLD, &size);
-    // char *buf = (char*)malloc(sizeof(char) * size * bufsize);
-    // next = (rank + 1) % size;
-    // prev = (rank + size - 1) % size;
-    // buf[0] = 'a' + rank;
-    // if (rank == 0) {
-    //     printf("Process 0 sending '%c' to %d, tag %d (%d processes in ring)\n", message, next, tag,
-    //            size);
-    //     MPI_Send(&message, 1, MPI_INT, next, tag, MPI_COMM_WORLD);
-    //     printf("Process 0 sent to %d\n", next);
-    // }
+std::string prefix = "[ring] ";
 
-    // /* Pass the message around the ring.  The exit mechanism works as
-    //    follows: the message (a positive integer) is passed around the
-    //    ring.  Each time it passes rank 0, it is decremented.  When
-    //    each processes receives a message containing a 0 value, it
-    //    passes the message on to the next process and then quits.  By
-    //    passing the 0 message first, every process gets the 0 message
-    //    and can quit normally. */
+int main(int argc, char **argv) {
+  std::cout.setf(std::ios::fixed);
+  int rank, size, bufsize = 1;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  char rank_char = 'a' + rank;
+  char *buf = (char *)malloc(sizeof(char) * bufsize);
+  buf[0] = rank_char;
 
-    // while (1) {
-    //     MPI_Recv(&message, 1, MPI_INT, prev, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+  int next = (rank + 1) % size, prev = (rank - 1 + size) % size;
+  std::cout << prefix << rank << ": send to " << next << ", receive from "
+            << prev << '\n';
 
-    //     if (0 == rank) {
-    //         --message;
-    //         printf("Process 0 decremented value: %d\n", message);
-    //     }
+  double t = MPI_Wtime();
+  MPI_Send(buf, bufsize, MPI_CHAR, next, 0, MPI_COMM_WORLD);
+  while (1) {
+    MPI_Recv(buf, bufsize, MPI_CHAR, prev, 0, MPI_COMM_WORLD,
+             MPI_STATUS_IGNORE);
+    if (buf[0] == rank_char) {
+      std::cout << prefix << rank << ": done, received rank_char '" << buf[0]
+                << "'\n";
+      break;
+    }
+    MPI_Send(buf, bufsize, MPI_CHAR, next, 0, MPI_COMM_WORLD);
+  }
+  t = MPI_Wtime() - t;
+  std::cout << prefix << rank << ": elapsed " << t << " sec\n";
 
-    //     MPI_Send(&message, 1, MPI_INT, next, tag, MPI_COMM_WORLD);
-    //     if (0 == message) {
-    //         printf("Process %d exiting\n", rank);
-    //         break;
-    //     }
-    // }
-
-    // /* The last process does one extra send to process 0, which needs
-    //    to be received before the program can exit */
-
-    // if (0 == rank) {
-    //     MPI_Recv(&message, 1, MPI_INT, prev, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    // }
-
-    // MPI_Finalize();
-    return 0;
+  free(buf);
+  MPI_Finalize();
+  return 0;
 }
