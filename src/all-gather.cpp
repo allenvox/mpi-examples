@@ -21,12 +21,12 @@ int main(int argc, char **argv) {
   for (int i = 0; i < p - 1; i++) {
     int sendTo = (rank + i + 1) % p;
     int receiveFrom = (rank - i - 1 + p) % p;
-    //std::cout << prefix << rank << ": send to " << sendTo << ", receive from "
-    //          << receiveFrom << '\n';
+    // std::cout << prefix << rank << ": send to " << sendTo 
+    //           << ", receive from" << receiveFrom << '\n';
     MPI_Sendrecv(sbuf, 1, MPI_CHAR, sendTo, 0, &rbuf[receiveFrom * bufsize], 1,
                  MPI_CHAR, receiveFrom, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    //std::cout << prefix << rank << ": rbuf[" << receiveFrom * bufsize
-    //          << "] = " << rbuf[receiveFrom * bufsize] << '\n';
+    // std::cout << prefix << rank << ": rbuf[" << receiveFrom * bufsize
+    //           << "] = " << rbuf[receiveFrom * bufsize] << '\n';
   }
   t = MPI_Wtime() - t;
 

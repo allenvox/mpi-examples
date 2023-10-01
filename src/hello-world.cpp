@@ -10,7 +10,8 @@ int main() {
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Get_processor_name(processor_name, &name_len);
 
-  std::cout << "Hello world from processor " << processor_name << ", rank " << rank << " out of " << size << " processors\n";
+  std::cout << "Hello world from processor " << processor_name << ", rank "
+            << rank << " out of " << size << " processors\n";
 
   MPI_Finalize();
   return 0;

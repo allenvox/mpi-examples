@@ -6,7 +6,7 @@ std::string prefix = "[bandwidth] ";
 
 int main(int argc, char **argv) {
   int rank, size, count = 32 * (1 << 20), iterations = 1000;
-  char *buf = (char*)malloc(sizeof(char) * count);
+  char *buf = (char *)malloc(sizeof(char) * count);
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_rank(MPI_COMM_WORLD, &size);
@@ -21,7 +21,8 @@ int main(int argc, char **argv) {
     }
   }
   t = (MPI_Wtime() - t) / iterations;
-  std::cout << prefix << rank << ": buf = " << buf[0] << ", took " << t << " seconds" << '\n';
+  std::cout << prefix << rank << ": buf = " << buf[0] << ", took " << t
+            << " seconds" << '\n';
   double gbps = count / 1024.0 / 1024.0 / 1024.0 / t;
   std::cout << prefix << rank << "'s result: " << gbps << " GBps\n";
 
