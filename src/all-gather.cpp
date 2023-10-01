@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-std::string prefix = "[all-gather-ring] ";
+std::string prefix = "[all-gather] ";
 
 int main(int argc, char **argv) {
   int rank, p, bufsize = 1024 * 1024;
