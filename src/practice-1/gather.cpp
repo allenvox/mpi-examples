@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     int source = status.MPI_SOURCE;
     std::copy(&local[0], &local[sbufsize - 1], &buf[(source - 1) * sbufsize]);
     std::cout << prefix << rank << ": received message from " << source << ": '"
-              << local << "'\n";
+              << buf[(source - 1) * sbufsize] << "'\n";
   }
   t = MPI_Wtime() - t;
 
