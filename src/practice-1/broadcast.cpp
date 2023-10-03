@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     for (int i = 0; i < size; i++) {
       if (i == root) continue;
       MPI_Send(buf, bufsize, MPI_CHAR, i, 0, MPI_COMM_WORLD);
-      std::cout << prefix << rank << ": sent buf \"" << buf << "\" to " << i
+      std::cout << prefix << rank << ": sent buf \"" << buf[0] << "\" to " << i
                 << '\n';
     }
   } else {
@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     MPI_Recv(buf, bufsize, MPI_CHAR, root, 0, MPI_COMM_WORLD,
              MPI_STATUS_IGNORE);
     if (buf[0] == 'x')
-      std::cout << prefix << rank << ": received buf \"" << buf << "\" from "
+      std::cout << prefix << rank << ": received buf \"" << buf[0] << "\" from "
                 << root << '\n';
     else
       std::cerr << prefix << rank << ": invalid buf\n";
