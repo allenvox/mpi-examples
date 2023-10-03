@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-std::string prefix = "[gather-ring] ";
+std::string prefix = "[all-gather-ring] ";
 
 int main(int argc, char **argv) {
+  std::cout.setf(std::ios::fixed);
   int rank, p, sbufsize = 1024 * 1024;
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
