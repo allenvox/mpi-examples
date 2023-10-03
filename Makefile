@@ -6,6 +6,11 @@ CXXSRC = $(wildcard src/practice-1/*.cpp)
 CXXEXEC = $(patsubst src/practice-1/%.cpp,bin/%,$(CXXSRC))
 DIRGUARD = @mkdir -p $(@D)
 
+UNAME = $(shell uname)
+ifeq ($(UNAME), Darwin)
+	CXXFLAGS += -ld_classic
+endif
+
 .PHONY: all
 all: $(CXXEXEC)
 
