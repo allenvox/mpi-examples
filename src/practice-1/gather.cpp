@@ -27,12 +27,15 @@ int main(int argc, char **argv) {
     buf = (char *)malloc(sizeof(char) * sbufsize * size);
     char *local = (char *)malloc(sizeof(char) * sbufsize);
     MPI_Status status;
-    MPI_Recv(local, sbufsize, MPI_CHAR, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD,
-             &status);
-    int source = status.MPI_SOURCE;
-    std::copy(&local[0], &local[sbufsize - 1], &buf[(source - 1) * sbufsize]);
-    std::cout << prefix << rank << ": received message from " << source << ": '"
-              << buf[(source - 1) * sbufsize] << "'\n";
+    for(int i = 0; i < size; ++i) {
+      if (i == rank) continue;
+      MPI_Recv(local, sbufsize, MPI_CHAR, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD,
+               &status);
+      int source = status.MPI_SOURCE;
+      std::copy(&local[0], &local[sbufsize - 1], &buf[(source - 1) * sbufsize]);
+      std::cout << prefix << rank << ": received message from " << source
+                << ": '" << buf[(source - 1) * sbufsize] << "'\n";
+    }
   }
   t = MPI_Wtime() - t;
 
