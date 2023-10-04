@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     buf = (char *)malloc(sizeof(char) * sbufsize * size);
     char *local = (char *)malloc(sizeof(char) * sbufsize);
     MPI_Status status;
-    for(int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i) {
       if (i == rank) continue;
       MPI_Recv(local, sbufsize, MPI_CHAR, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD,
                &status);
