@@ -8,9 +8,7 @@ const int n0 = 100;
 const double a = -1;
 const double b = 1;
 
-double func(double x) {
-  return (sin(x + 2)) / (0.4 + cos(x));
-}
+double func(double x) { return (sin(x + 2)) / (0.4 + cos(x)); }
 
 int main(int argc, char **argv) {
   int commsize, rank;
@@ -35,8 +33,8 @@ int main(int argc, char **argv) {
     }
   }
   if (rank == 0) {
-    std::cout << "[midpoint] result: " << sq[k] << "; Runge rule: EPS = "
-              << eps << ", n = " << n / 2 << '\n';
+    std::cout << "[midpoint] result: " << sq[k] << "; Runge rule: EPS = " << eps
+              << ", n = " << n / 2 << '\n';
   }
   MPI_Finalize();
   return 0;
