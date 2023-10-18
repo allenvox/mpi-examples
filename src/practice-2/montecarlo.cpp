@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-const int n = 100;
+const int n = 100000000;
 
 double get_rand() { return static_cast<double>(rand()) / RAND_MAX; }
 
