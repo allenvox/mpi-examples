@@ -1,10 +1,10 @@
-CC = mpicc
+DIRGUARD = @mkdir -p $(@D)
+
 CFLAGS = -Wall -Wextra -Werror
 CXX = mpicxx
 CXXFLAGS = -pedantic -std=c++17
-CXXSRC = $(wildcard src/practice-1/*.cpp)
-CXXEXEC = $(patsubst src/practice-1/%.cpp,bin/%,$(CXXSRC))
-DIRGUARD = @mkdir -p $(@D)
+CXXSRC = $(wildcard src/practice-2/*.cpp)
+CXXEXEC = $(patsubst src/practice-2/%.cpp,bin/%,$(CXXSRC))
 
 UNAME = $(shell uname)
 ifeq ($(UNAME), Darwin)
@@ -14,7 +14,7 @@ endif
 .PHONY: all
 all: $(CXXEXEC)
 
-bin/%: src/practice-1/%.cpp
+bin/%: src/*/%.cpp
 	$(DIRGUARD)
 	$(CXX) $(CFLAGS) $(CXXFLAGS) -o $@ $<
 
@@ -22,8 +22,3 @@ bin/%: src/practice-1/%.cpp
 .SILENT: clean
 clean:
 	rm -f $(CXXEXEC)
-
-.PHONY: format
-.SILENT: format
-format:
-	clang-format -i $(CXXSRC)
