@@ -4,7 +4,7 @@
 #include <iostream>
 
 const double eps = 1E-6;
-const int n0 = 100;
+const int n0 = 1000000;
 const double a = -1;
 const double b = 1;
 
