@@ -39,8 +39,9 @@ int main(int argc, char **argv) {
   t = MPI_Wtime() - t;
 
   if (rank == 0) {
-    std::cout << "[midpoint] S = " << sq[k] << ", t = " << t << ", eps = "
-              << eps << ", n = " << n / 2 << '\n';
+    std::cout << "[midpoint] S = " << sq[k] << ", t = " << t
+              << ", commsize = " << commsize << ", eps = " << eps
+              << ", n = " << n / 2 << '\n';
   }
   MPI_Finalize();
   return 0;
