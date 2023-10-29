@@ -39,8 +39,8 @@ int main(int argc, char **argv) {
   if (rank == 0) {
     double v = static_cast<double>(global_in) / n;
     double res = v * global_sum / global_in;
-    std::cout << "[montecarlo] S = " << res << ", t = " << t << ", commsize = "
-              << commsize << ", n = " << n << '\n';
+    std::cout << "[montecarlo] S = " << res << ", t = " << t
+              << ", commsize = " << commsize << ", n = " << n << '\n';
   }
 
   MPI_Finalize();
