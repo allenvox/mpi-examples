@@ -17,6 +17,7 @@ void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
   int q = n / commsize;
   if (n % commsize) q++;
   int r = commsize * q - n;
+
   /* Compute chunk size for the process */
   int chunk = q;
   if (rank >= commsize - r) chunk = q - 1;
@@ -35,6 +36,7 @@ void dgemv(double *a, double *b, double *c, int m, int n) {
   int commsize, rank;
   MPI_Comm_size(MPI_COMM_WORLD, &commsize);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
   int lb, ub;
   get_chunk(0, m - 1, commsize, rank, &lb, &ub);
   int nrows = ub - lb + 1;
@@ -42,6 +44,7 @@ void dgemv(double *a, double *b, double *c, int m, int n) {
     c[lb + i] = 0.0;
     for (int j = 0; j < n; j++) c[lb + i] += a[i * n + j] * b[j];
   }
+
   // Gather data: each process contains sub-result in c[m] in rows [lb..ub]
   if (rank == 0) {
     int *displs = (int *)malloc(sizeof(*displs) * commsize);
@@ -65,7 +68,9 @@ int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &commsize);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
   double t = MPI_Wtime();
+
   int lb, ub;
   get_chunk(0, m - 1, commsize, rank, &lb,
             &ub);  // Декомпозиция матрицы на горизонтальные полосы
@@ -89,6 +94,7 @@ int main(int argc, char **argv) {
     b[j] = j + 1;
   }
   dgemv(a, b, c, m, n);
+
   t = MPI_Wtime() - t;
 
   if (rank == 0) {
@@ -102,7 +108,7 @@ int main(int argc, char **argv) {
       }
     }
     std::cout << prefix << "commsize = " << commsize << ", m = " << m
-              << ", n = " << n << ", time = " << t << "sec.\n";
+              << ", n = " << n << ", time = " << t << " sec.\n";
     double gflop = 2.0 * m * n * 1E-9;
     std::cout << prefix << "performance: " << gflop / t << " GFLOPS\n";
     auto used_mem =
