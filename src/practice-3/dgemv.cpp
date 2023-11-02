@@ -4,7 +4,7 @@
 #include <iostream>
 
 const std::string prefix = "[dgemv] ";
-enum { m = 28000, n = 28000 };
+enum { m = 45000, n = 45000 };
 
 void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
   /* OpenMP 4.0 spec (Sec. 2.7.1, default schedule for loops)
