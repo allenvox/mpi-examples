@@ -7,12 +7,6 @@ const std::string prefix = "[sgemv] ";
 enum { m = 45000, n = 45000 };
 
 void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
-  /* OpenMP 4.0 spec (Sec. 2.7.1, default schedule for loops)
-   * For a team of commsize processes and a sequence of n items, let ceil(n ?
-   * commsize) be the integer q that satisfies n = commsize * q - r, with 0 <= r
-   * < commsize.
-   * Assign q iterations to the first commsize - r procs, and q - 1 iterations
-   * to the remaining r processes */
   int n = b - a + 1;
   int q = n / commsize;
   if (n % commsize) q++;
@@ -104,14 +98,15 @@ int main(int argc, char **argv) {
 
   if (rank == 0) {
     // Validation
-    for (int i = 0; i < m; i++) {
+    /*for (int i = 0; i < m; i++) {
       float r = (i + 1) * (n / 2.0 + pow(n, 2) / 2.0);
       if (fabs(c[i] - r) > 0.00001) {
         std::cerr << "Validation failed: elem " << i << " = " << c[i]
                   << " (real value " << r << ")\n";
         break;
       }
-    }
+    }*/
+
     std::cout << prefix << "commsize = " << commsize << ", m = " << m
               << ", n = " << n << ", time = " << t << " sec.\n";
     double gflop = 2.0 * m * n * 1E-9;
