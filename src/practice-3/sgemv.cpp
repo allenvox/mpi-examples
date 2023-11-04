@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-const std::string prefix = "[dgemv] ";
+const std::string prefix = "[sgemv] ";
 enum { m = 45000, n = 45000 };
 
 void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
@@ -23,16 +23,17 @@ void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
   if (rank >= commsize - r) chunk = q - 1;
   *lb = a;        /* Determine start item for the process */
   if (rank > 0) { /* Count sum of previous chunks */
-    if (rank <= commsize - r)
-      *lb += q * rank;
-    else
-      *lb += q * (commsize - r) + (q - 1) * (rank - (commsize - r));
+    if (rank <= commsize - r) {
+        *lb += q * rank;
+    } else {
+        *lb += q * (commsize - r) + (q - 1) * (rank - (commsize - r));
+    }
   }
   *ub = *lb + chunk - 1;
 }
 
-/* dgemv: Compute matrix-vector product c[m] = a[m][n] * b[n] */
-void dgemv(double *a, double *b, double *c, int m, int n) {
+/* sgemv: Compute matrix-vector product c[m] = a[m][n] * b[n] */
+void sgemv(float *a, float *b, float *c, int m, int n) {
   int commsize, rank;
   MPI_Comm_size(MPI_COMM_WORLD, &commsize);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -42,7 +43,9 @@ void dgemv(double *a, double *b, double *c, int m, int n) {
   int nrows = ub - lb + 1;
   for (int i = 0; i < nrows; i++) {
     c[lb + i] = 0.0;
-    for (int j = 0; j < n; j++) c[lb + i] += a[i * n + j] * b[j];
+    for (int j = 0; j < n; j++) {
+        c[lb + i] += a[i * n + j] * b[j];
+    }
   }
 
   // Gather data: each process contains sub-result in c[m] in rows [lb..ub]
@@ -76,9 +79,9 @@ int main(int argc, char **argv) {
             &ub);  // Декомпозиция матрицы на горизонтальные полосы
   int nrows = ub - lb + 1;
 
-  double *a = (double *)malloc(sizeof(*a) * nrows * n);
-  double *b = (double *)malloc(sizeof(*b) * n);
-  double *c = (double *)malloc(sizeof(*c) * m);
+  float *a = (double *)malloc(sizeof(*a) * nrows * n);
+  float *b = (double *)malloc(sizeof(*b) * n);
+  float *c = (double *)malloc(sizeof(*c) * m);
   if (!a || !b || !c) {
     std::cerr << "Malloc of arrays failed\n";
     return 1;
@@ -93,7 +96,7 @@ int main(int argc, char **argv) {
   for (int j = 0; j < n; j++) {
     b[j] = j + 1;
   }
-  dgemv(a, b, c, m, n);
+  sgemv(a, b, c, m, n);
 
   t = MPI_Wtime() - t;
 
