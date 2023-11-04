@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     double gflop = 2.0 * m * n * 1E-9;
     std::cout << prefix << "performance: " << gflop / t << " GFLOPS\n";
     auto used_mem =
-        static_cast<uint32_t>(((m * n + m + n) * sizeof(float)) >> 20);
+        static_cast<uint64_t>(((m * n + m + n) * sizeof(float)) >> 20);
     std::cout << prefix << "used " << used_mem << " MiB of RAM\n";
   }
 
