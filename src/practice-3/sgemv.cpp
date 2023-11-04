@@ -58,15 +58,17 @@ void sgemv(float *a, float *b, float *c, int m, int n) {
       rcounts[i] = u - l + 1;
       displs[i] = (i > 0) ? displs[i - 1] + rcounts[i - 1] : 0;
     }
-    MPI_Gatherv(MPI_IN_PLACE, ub - lb + 1, MPI_DOUBLE, c, rcounts, displs,
-                MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Gatherv(MPI_IN_PLACE, ub - lb + 1, MPI_FLOAT, c, rcounts, displs,
+                MPI_FLOAT, 0, MPI_COMM_WORLD);
   } else {
-    MPI_Gatherv(&c[lb], ub - lb + 1, MPI_DOUBLE, NULL, NULL, NULL, MPI_DOUBLE,
+    MPI_Gatherv(&c[lb], ub - lb + 1, MPI_FLOAT, NULL, NULL, NULL, MPI_FLOAT,
                 0, MPI_COMM_WORLD);
   }
 }
 
 int main(int argc, char **argv) {
+  std::cout.setf(std::ios::fixed);
+
   int commsize, rank;
   MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &commsize);
@@ -79,9 +81,9 @@ int main(int argc, char **argv) {
             &ub);  // Декомпозиция матрицы на горизонтальные полосы
   int nrows = ub - lb + 1;
 
-  float *a = (double *)malloc(sizeof(*a) * nrows * n);
-  float *b = (double *)malloc(sizeof(*b) * n);
-  float *c = (double *)malloc(sizeof(*c) * m);
+  float *a = (float *)malloc(sizeof(*a) * nrows * n);
+  float *b = (float *)malloc(sizeof(*b) * n);
+  float *c = (float *)malloc(sizeof(*c) * m);
   if (!a || !b || !c) {
     std::cerr << "Malloc of arrays failed\n";
     return 1;
@@ -103,8 +105,8 @@ int main(int argc, char **argv) {
   if (rank == 0) {
     // Validation
     for (int i = 0; i < m; i++) {
-      double r = (i + 1) * (n / 2.0 + pow(n, 2) / 2.0);
-      if (fabs(c[i] - r) > 1E-6) {
+      float r = (i + 1) * (n / 2.0 + pow(n, 2) / 2.0);
+      if (fabs(c[i] - r) > 0.00001) {
         std::cerr << "Validation failed: elem " << i << " = " << c[i]
                   << " (real value " << r << ")\n";
         break;
@@ -115,7 +117,7 @@ int main(int argc, char **argv) {
     double gflop = 2.0 * m * n * 1E-9;
     std::cout << prefix << "performance: " << gflop / t << " GFLOPS\n";
     auto used_mem =
-        static_cast<uint64_t>(((m * n + m + n) * sizeof(double)) >> 20);
+        static_cast<uint32_t>(((m * n + m + n) * sizeof(float)) >> 20);
     std::cout << prefix << "used " << used_mem << " MiB of RAM\n";
   }
 
