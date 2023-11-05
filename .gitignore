@@ -1,3 +1,9 @@
+### Images ###
+*.png
+*.jpeg
+*.jpg
+*.bmp
+
 ### JetBrains ###
 .idea
 
