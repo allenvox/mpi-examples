@@ -4,7 +4,7 @@
 #include <iostream>
 
 const std::string prefix = "[sgemv] ";
-enum { m = 10, n = 10 };
+enum { m = 28000, n = 28000 };
 
 void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
     int n = b - a + 1;
@@ -64,6 +64,8 @@ int main(int argc, char **argv) {
     float *b = (float *)malloc(sizeof(*b) * n);
     float *c = (float *)malloc(sizeof(*c) * m);
     float *result = (float *)malloc(sizeof(*result) * m * commsize); // for all processes
+    int *recvcounts = (int *)malloc(sizeof(*recvcounts) * commsize);
+    int *displs = (int *)malloc(sizeof(*displs) * commsize);
 
     if (!a || !b || !c || !result) {
         std::cerr << "Malloc of arrays failed\n";
@@ -80,8 +82,14 @@ int main(int argc, char **argv) {
         b[j] = j + 1;
     }
     sgemv(a, b, c, m, n, commsize, rank);
-    // gathering the result on all processes
-    MPI_Allgather(c + lb, nrows, MPI_FLOAT, result, nrows, MPI_FLOAT, MPI_COMM_WORLD);
+
+    MPI_Allgather(&nrows, 1, MPI_INT, recvcounts, 1, MPI_INT, MPI_COMM_WORLD);
+    int total_rows = 0;
+    for (int i = 0; i < commsize; ++i) {
+        displs[i] = total_rows;
+        total_rows += recvcounts[i];
+    }
+    MPI_Allgatherv(c, nrows, MPI_FLOAT, result, recvcounts, displs, MPI_FLOAT, MPI_COMM_WORLD);
 
     t = MPI_Wtime() - t;
 
