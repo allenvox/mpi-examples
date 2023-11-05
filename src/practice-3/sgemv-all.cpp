@@ -4,7 +4,7 @@
 #include <iostream>
 
 const std::string prefix = "[sgemv] ";
-enum { m = 28000, n = 28000 };
+enum { m = 10, n = 10 };
 
 void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
     int n = b - a + 1;
@@ -36,6 +36,14 @@ void sgemv(float *a, float *b, float *c, int m, int n, int commsize, int rank) {
             c[lb + i] += a[i * n + j] * b[j];
         }
     }
+}
+
+void printResult(float *result, int m, int commsize, int rank) {
+    std::cout << "Result on process " << rank << ": ";
+    for (int i = 0; i < m * commsize; i++) {
+        std::cout << result[i] << " ";
+    }
+    std::cout << std::endl;
 }
 
 int main(int argc, char **argv) {
@@ -72,11 +80,12 @@ int main(int argc, char **argv) {
         b[j] = j + 1;
     }
     sgemv(a, b, c, m, n, commsize, rank);
-
     // gathering the result on all processes
     MPI_Allgather(c + lb, nrows, MPI_FLOAT, result, nrows, MPI_FLOAT, MPI_COMM_WORLD);
 
     t = MPI_Wtime() - t;
+
+    //printResult(result, m, commsize, rank);
 
     // each process outputs the result
     std::cout << prefix << "commsize = " << commsize << ", m = " << m
