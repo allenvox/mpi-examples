@@ -92,10 +92,16 @@ int main(int argc, char **argv) {
     sgemv(a, b, c, m, n, commsize, rank);
 
     MPI_Allgather(&nrows, 1, MPI_INT, recvcounts, 1, MPI_INT, MPI_COMM_WORLD);
+    for (int i = 0; i < commsize; ++i) {
+        std::cout << prefix << i << ": recvcount = " << recvcounts[i] << '\n';
+    }
     int total_rows = 0;
     for (int i = 0; i < commsize; ++i) {
         displs[i] = total_rows;
         total_rows += recvcounts[i];
+    }
+    for (int i = 0; i < commsize; ++i) {
+        std::cout << prefix << i << ": displs = " << displs[i] << '\n';
     }
     MPI_Allgatherv(c, nrows, MPI_FLOAT, result, recvcounts, displs, MPI_FLOAT, MPI_COMM_WORLD);
 
