@@ -20,7 +20,6 @@ def draw(filenames, labels, dest_filename):
     #ax.yaxis.set_ticks(np.arange(1.8, 9, 1))
     ax.xaxis.set_tick_params(direction='in', which='both')
     ax.yaxis.set_tick_params(direction='in', which='both')
-    #ax.grid()
     for (fname, datalabel) in zip(filenames, labels):
         data = np.loadtxt(fname)
         x = data[:, 0]
@@ -35,6 +34,16 @@ def draw(filenames, labels, dest_filename):
             marker = '-'
             color = "red"
         ax.plot(x, y, marker, c = color, markersize = 4.0, linewidth = 1.2, label = datalabel)
+    labels = [item.get_text() for item in ax.get_xticklabels()]
+    labels[0] = '2\n(2x1)'
+    labels[1] = '4\n(2x2)'
+    labels[2] = '6\n(2x3)'
+    labels[3] = '8\n(2x4)'
+    labels[4] = '10\n(2x5)'
+    labels[5] = '12\n(2x6)'
+    labels[6] = '14\n(2x7)'
+    labels[7] = '16\n(2x8)'
+    ax.set_xticklabels(labels)
     plt.tight_layout()
     ax.legend()
     fig.savefig(dest_filename, dpi = 300)
