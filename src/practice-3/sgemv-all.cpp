@@ -6,6 +6,12 @@
 const std::string prefix = "[sgemv] ";
 enum { m = 28000, n = 28000 };
 
+/* 4x^2 / NODES + 4x + 4x = RAM * 0,8
+ * RAM = 24 * 1024^3 (24 GiB)
+ * NODES=1: X = 71790
+ * NODES=18: X = 304565
+ */
+
 void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
     int n = b - a + 1;
     int q = n / commsize;
@@ -23,6 +29,7 @@ void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
         }
     }
     *ub = *lb + chunk - 1;
+    std::cout << "rank " << rank << ": lb = " << *lb << ", ub = " << *ub << '\n';
 }
 
 /* sgemv: Compute matrix-vector product c[m] = a[m][n] * b[n] */
@@ -63,11 +70,11 @@ int main(int argc, char **argv) {
     float *a = (float *)malloc(sizeof(*a) * nrows * n);
     float *b = (float *)malloc(sizeof(*b) * n);
     float *c = (float *)malloc(sizeof(*c) * m);
-    float *result = (float *)malloc(sizeof(*result) * m * commsize); // for all processes
+    float *result = (float *)malloc(sizeof(*result) * m * commsize);
     int *recvcounts = (int *)malloc(sizeof(*recvcounts) * commsize);
     int *displs = (int *)malloc(sizeof(*displs) * commsize);
 
-    if (!a || !b || !c || !result) {
+    if (!a || !b || !c || !result || !recvcounts || !displs) {
         std::cerr << "Malloc of arrays failed\n";
         return 1;
     }
