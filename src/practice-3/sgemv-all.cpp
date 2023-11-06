@@ -29,7 +29,8 @@ void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
         }
     }
     *ub = *lb + chunk - 1;
-    std::cout << "rank " << rank << ": lb = " << *lb << ", ub = " << *ub << '\n';
+    std::cout << prefix << "rank " << rank << ": lb = " << *lb << ", ub = "
+              << *ub << '\n';
 }
 
 /* sgemv: Compute matrix-vector product c[m] = a[m][n] * b[n] */
@@ -102,14 +103,15 @@ int main(int argc, char **argv) {
 
     //printResult(result, m, commsize, rank);
 
-    // each process outputs the result
-    std::cout << prefix << "commsize = " << commsize << ", m = " << m
-              << ", n = " << n << ", time = " << t << " sec.\n";
-    double gflop = 2.0 * m * n * 1E-9;
-    std::cout << prefix << "performance: " << gflop / t << " GFLOPS\n";
-    auto used_mem =
-            static_cast<uint64_t>(((m * n + m + n) * sizeof(float)) >> 20);
-    std::cout << prefix << "used " << used_mem << " MiB of RAM\n";
+    if (rank == 0) {
+        std::cout << prefix << "commsize = " << commsize << ", m = " << m
+                  << ", n = " << n << ", time = " << t << " sec.\n";
+        double gflop = 2.0 * m * n * 1E-9;
+        std::cout << prefix << "performance: " << gflop / t << " GFLOPS\n";
+        auto used_mem =
+                static_cast<uint32_t>(((m * n + m + n) * sizeof(float)) >> 20);
+        std::cout << prefix << "used " << used_mem << " MiB of RAM\n";
+    }
 
     free(a);
     free(b);
