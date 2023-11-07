@@ -18,9 +18,9 @@ void get_chunk(int a, int b, int commsize, int rank, int *lb, int *ub) {
   *lb = a;        /* Determine start item for the process */
   if (rank > 0) { /* Count sum of previous chunks */
     if (rank <= commsize - r) {
-        *lb += q * rank;
+      *lb += q * rank;
     } else {
-        *lb += q * (commsize - r) + (q - 1) * (rank - (commsize - r));
+      *lb += q * (commsize - r) + (q - 1) * (rank - (commsize - r));
     }
   }
   *ub = *lb + chunk - 1;
@@ -38,7 +38,7 @@ void sgemv(float *a, float *b, float *c, int m, int n) {
   for (int i = 0; i < nrows; i++) {
     c[lb + i] = 0.0;
     for (int j = 0; j < n; j++) {
-        c[lb + i] += a[i * n + j] * b[j];
+      c[lb + i] += a[i * n + j] * b[j];
     }
   }
 
@@ -55,8 +55,8 @@ void sgemv(float *a, float *b, float *c, int m, int n) {
     MPI_Gatherv(MPI_IN_PLACE, ub - lb + 1, MPI_FLOAT, c, rcounts, displs,
                 MPI_FLOAT, 0, MPI_COMM_WORLD);
   } else {
-    MPI_Gatherv(&c[lb], ub - lb + 1, MPI_FLOAT, NULL, NULL, NULL, MPI_FLOAT,
-                0, MPI_COMM_WORLD);
+    MPI_Gatherv(&c[lb], ub - lb + 1, MPI_FLOAT, NULL, NULL, NULL, MPI_FLOAT, 0,
+                MPI_COMM_WORLD);
   }
 }
 
