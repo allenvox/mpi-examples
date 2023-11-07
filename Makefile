@@ -3,8 +3,8 @@ DIRGUARD = @mkdir -p $(@D)
 CFLAGS = -Wall -Wextra -Werror
 CXX = mpicxx
 CXXFLAGS = -pedantic -std=c++17
-CXXSRC = $(wildcard src/practice-3/*.cpp)
-CXXEXEC = $(patsubst src/practice-3/%.cpp,bin/%,$(CXXSRC))
+CXXSRC = $(wildcard src/practice-4/*.cpp)
+CXXEXEC = $(patsubst src/practice-4/%.cpp,bin/%,$(CXXSRC))
 
 UNAME = $(shell uname)
 ifeq ($(UNAME), Darwin)
