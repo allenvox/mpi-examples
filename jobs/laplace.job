@@ -1,0 +1,3 @@
+#!/bin/bash
+#SBATCH --nodes=2 --ntasks=16
+mpiexec bin/laplace
