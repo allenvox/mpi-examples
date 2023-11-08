@@ -26,23 +26,21 @@ def draw(filenames, labels, dest_filename):
         y = data[:, 1]
         if datalabel == "N = 1000":
             marker = '-^'
-            color = "dodgerblue"
+            color = "orange"
         elif datalabel == "N = 10000":
             marker = '-s'
-            color = "orange"
+            color = "dodgerblue"
         else:
             marker = '-'
             color = "red"
         ax.plot(x, y, marker, c = color, markersize = 4.0, linewidth = 1.2, label = datalabel)
     labels = [item.get_text() for item in ax.get_xticklabels()]
-    labels[0] = '2\n(2x1)'
-    labels[1] = '4\n(2x2)'
-    labels[2] = '6\n(2x3)'
-    labels[3] = '8\n(2x4)'
-    labels[4] = '10\n(2x5)'
-    labels[5] = '12\n(2x6)'
-    labels[6] = '14\n(2x7)'
-    labels[7] = '16\n(2x8)'
+    labels[1] = '6\n(2x3)'
+    labels[2] = '8\n(2x4)'
+    labels[3] = '10\n(2x5)'
+    labels[4] = '12\n(2x6)'
+    labels[5] = '14\n(2x7)'
+    labels[6] = '16\n(2x8)'
     ax.set_xticklabels(labels)
     plt.tight_layout()
     ax.legend()
