@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
   double *local_newgrid =
       (double *)calloc((ny + 2) * (nx + 2), sizeof(*local_newgrid));
   if (!local_grid || !local_newgrid) {
-    std::cerr << "Error while mallocing local_ grid / newgrid\n";
+    std::cerr << "Error while callocing local / new grid\n";
     return 1;
   }
 
