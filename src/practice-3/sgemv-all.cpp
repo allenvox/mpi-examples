@@ -124,6 +124,8 @@ int main(int argc, char **argv) {
   free(b);
   free(c);
   free(result);
+  free(recvcounts);
+  free(displs);
   MPI_Finalize();
   return 0;
 }
